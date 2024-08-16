@@ -122,7 +122,7 @@ export default function PixelArt() {
         </div>
 
         <div
-          className={`grid ${handleSize().numberOfCollums} gap-0 p-2 min-w-[500px]`}
+          className={`grid ${handleSize().numberOfCollums} gap-0 p-2 min-w-max`}
           id="pixel-art-canvas"
         >
           {pixels.map((color, index) => (
