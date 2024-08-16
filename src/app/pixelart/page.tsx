@@ -6,7 +6,7 @@ export default function PixelArt() {
   const [collums, setCollums] = useState(110);
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [border, setBorder] = useState(true);
-  const [pixels, setPixels] = useState(Array(collums).fill('#000000'));
+  const [pixels, setPixels] = useState(Array(collums).fill('#ffffff'));
 
   const colorOptions: string[] = [
     "#E53935",
@@ -28,6 +28,10 @@ export default function PixelArt() {
     numberOfCollums: string;
   }
 
+  const GRID_PEQUENO = 336
+  const GRID_MEDIO = 1581
+  const GRID_GRANDE = 5151
+
   function handleColor(value: string): void {
     setSelectedColor(value);
   }
@@ -47,10 +51,10 @@ export default function PixelArt() {
   }
 
   function handleSize(): ISizeConfig {
-    if (collums === 110) {
+    if (collums === 1581) {
       return {
-        size: 'w-10 h-10',
-        numberOfCollums: 'grid-cols-11',
+        size: 'w-5 h-5',
+        numberOfCollums: 'grid-cols-51',
       };
     }
 
@@ -60,11 +64,11 @@ export default function PixelArt() {
         numberOfCollums: 'grid-cols-21',
       };
     }
-
-    return {
-      size: 'w-3 h-3',
-      numberOfCollums: 'grid-cols-51',
-    };
+    else
+      return {
+        size: 'w-3 h-3',
+        numberOfCollums: 'grid-cols-101',
+      };
   }
 
   function captureScreenshot() {
@@ -80,77 +84,75 @@ export default function PixelArt() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-around bg-slate-400 p-10 rounded-lg shadow-lg w-full h-screen border-2 border-red">
-        <div className="grid grid-cols-1 gap-2 p-5 min-w-[150px]">
-          <button
-            onClick={() => { handleBorder(border); }}
-            className="text-white rounded-lg border border-gray-700 bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-200 px-4 py-2"
-          >
-            {border ? "Bordas" : "Bordas"}
-          </button>
-          <button
-            onClick={captureScreenshot}
-            className="text-white rounded-lg border border-gray-700 bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 transition duration-200 px-4 py-2"
-          >
-            Salvar
-          </button>
-          <button
-            onClick={() => { handleCollums(110); setPixels(Array(110).fill(selectedColor)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
-          >
-            Pequeno
-          </button>
-          <button
-            onClick={() => { handleCollums(336); setPixels(Array(336).fill(selectedColor)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
-          >
-            Médio
-          </button>
-          <button
-            onClick={() => { handleCollums(1581); setPixels(Array(1581).fill(selectedColor)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
-          >
-            Grande
-          </button>
-          <button
-            onClick={() => { setPixels(Array(collums).fill(selectedColor)); }}
-            className="text-white rounded-lg border border-gray-700 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-200 px-4 py-2"
-          >
-            Limpar
-          </button>
-        </div>
-
-        <div
-          className={`grid ${handleSize().numberOfCollums} gap-0 p-2 min-w-max`}
-          id="pixel-art-canvas"
+    <div className="flex items-center justify-center bg-slate-400 p-10 rounded-lg shadow-lg w-full h-screen">
+      <div className="grid grid-cols-1 gap-2 min-w-[150px]">
+        <button
+          onClick={() => { handleBorder(border); }}
+          className="text-white rounded-lg border border-gray-700 bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-200 px-4 py-2"
         >
-          {pixels.map((color, index) => (
-            <div
+          {border ? "Bordas" : "Bordas"}
+        </button>
+        <button
+          onClick={captureScreenshot}
+          className="text-white rounded-lg border border-gray-700 bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300 transition duration-200 px-4 py-2"
+        >
+          Salvar
+        </button>
+        <button
+          onClick={() => { handleCollums(GRID_PEQUENO); setPixels(Array(GRID_PEQUENO).fill(selectedColor)); }}
+          className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
+        >
+          Pequeno
+        </button>
+        <button
+          onClick={() => { handleCollums(GRID_MEDIO); setPixels(Array(GRID_MEDIO).fill(selectedColor)); }}
+          className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
+        >
+          Médio
+        </button>
+        <button
+          onClick={() => { handleCollums(GRID_GRANDE); setPixels(Array(GRID_GRANDE).fill(selectedColor)); }}
+          className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
+        >
+          Grande
+        </button>
+        <button
+          onClick={() => { setPixels(Array(collums).fill(selectedColor)); }}
+          className="text-white rounded-lg border border-gray-700 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-200 px-4 py-2"
+        >
+          Limpar
+        </button>
+      </div>
+
+      <div
+        className={`grid ${handleSize().numberOfCollums} gap-0 min-w-max p-5`}
+        id="pixel-art-canvas"
+      >
+        {pixels.map((color, index) => (
+          <div
+            key={index}
+            className={`${handleSize().size} ${border ? 'border-2' : ''} border-blue-300 gap-0`}
+            style={{ backgroundColor: color }}
+            onClick={() => handleSinglePixel(index)}
+          ></div>
+        ))}
+      </div>
+      <div className="flex flex-col items-center justify-start bg-gray-200 rounded-lg shadow-md border-2 p-3">
+        <input
+          type="color"
+          value={selectedColor}
+          onChange={(e) => handleColor(e.target.value)}
+          className="w-20 h-10 border border-gray-700 rounded-lg mt-5 mb-7"
+        />
+        <div className="grid grid-cols-2 gap-2 w-[100px]">
+          {colorOptions.map((color, index) => (
+            <button
               key={index}
-              className={`${handleSize().size} ${border ? 'border-2' : ''} border-blue-300 gap-0`}
-              style={{ backgroundColor: color, boxSizing: 'border-box' }}
-              onClick={() => handleSinglePixel(index)}
-            ></div>
+              className="w-10 h-10 rounded-full border border-gray-300 shadow-md hover:shadow-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-150"
+              style={{ backgroundColor: color }}
+              onClick={() => handleColor(color)}
+            ></button>
           ))}
-        </div>
-        <div className="flex flex-col items-center justify-start bg-gray-200 rounded-lg shadow-md border-2 p-5 ml-7">
-          <input
-            type="color"
-            value={selectedColor}
-            onChange={(e) => handleColor(e.target.value)}
-            className="w-20 h-10 border border-gray-700 rounded-lg mt-5 mb-7"
-          />
-          <div className="grid grid-cols-2 gap-2 w-[100px]">
-            {colorOptions.map((color, index) => (
-              <button
-                key={index}
-                className="w-10 h-10 rounded-full border border-gray-300 shadow-md hover:shadow-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-150"
-                style={{ backgroundColor: color }}
-                onClick={() => handleColor(color)}
-              ></button>
-            ))}
-          </div>
         </div>
       </div>
     </div>
