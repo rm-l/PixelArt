@@ -3,7 +3,7 @@ import html2canvas from "html2canvas";
 import { useState } from "react";
 
 export default function PixelArt() {
-  const [collums, setCollums] = useState(110);
+  const [collums, setCollums] = useState(336);
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [border, setBorder] = useState(true);
   const [pixels, setPixels] = useState(Array(collums).fill('#ffffff'));
