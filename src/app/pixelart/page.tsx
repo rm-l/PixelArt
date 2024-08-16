@@ -84,8 +84,8 @@ export default function PixelArt() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-slate-400 p-10 rounded-lg shadow-lg w-full h-screen">
-      <div className="grid grid-cols-1 gap-2 min-w-[150px]">
+    <div className="flex items-center justify-center bg-slate-400 p-10 rounded-lg shadow-lg w-screen h-screen">
+      <div className="grid grid-cols-1 gap-2 min-w-[150px] max-w-[20vw]">
         <button
           onClick={() => { handleBorder(border); }}
           className="text-white rounded-lg border border-gray-700 bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-200 px-4 py-2"
@@ -125,7 +125,7 @@ export default function PixelArt() {
       </div>
 
       <div
-        className={`grid ${handleSize().numberOfCollums} gap-0 min-w-max p-5`}
+        className={`grid ${handleSize().numberOfCollums} gap-0 p-5 max-w-[80vw] max-h-[80vh] overflow-auto`}
         id="pixel-art-canvas"
       >
         {pixels.map((color, index) => (

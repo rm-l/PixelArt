@@ -9,7 +9,7 @@ const MeuComponente = () => {
   };
 
   return (
-    <div className='min-h-screen min-w-full bg-gray-900 flex flex-col items-center justify-center'>
+    <div className='h-screen w-full bg-gray-900 flex flex-col items-center justify-center'>
       <div className='text-center bg-gray-800 text-gray-200 p-10 rounded-lg shadow-lg'>
         <h1 className='text-4xl font-bold mb-4'>
           Olá! Bem-vindo ao projeto Pixel Art
