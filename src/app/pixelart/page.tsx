@@ -4,8 +4,8 @@ import { useState } from "react";
 
 export default function PixelArt() {
   const [collums, setCollums] = useState(110);
-  const [selectedColor, setSelectedColor] = useState('#ffffff')
-  const [border, setBorder] = useState(true)
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
+  const [border, setBorder] = useState(true);
   const [pixels, setPixels] = useState(Array(collums).fill('#000000'));
 
   const colorOptions: string[] = [
@@ -24,8 +24,8 @@ export default function PixelArt() {
   ];
 
   interface ISizeConfig {
-    size: string
-    numberOfCollums: string
+    size: string;
+    numberOfCollums: string;
   }
 
   function handleColor(value: string): void {
@@ -39,34 +39,32 @@ export default function PixelArt() {
   }
 
   function handleBorder(border: boolean): void {
-    setBorder(!border)
+    setBorder(!border);
   }
 
   function handleCollums(collums: number): void {
-    setCollums(collums)
+    setCollums(collums);
   }
 
   function handleSize(): ISizeConfig {
-    if (collums == 110) {
-      return ({
+    if (collums === 110) {
+      return {
         size: 'w-10 h-10',
-        numberOfCollums: 'grid-cols-11'
-      })
+        numberOfCollums: 'grid-cols-11',
+      };
     }
 
-    if (collums == 336) {
-      return ({
+    if (collums === 336) {
+      return {
         size: 'w-5 h-5',
-        numberOfCollums: 'grid-cols-21'
-      })
+        numberOfCollums: 'grid-cols-21',
+      };
     }
 
-    else {
-      return ({
-        size: 'w-3 h-3',
-        numberOfCollums: 'grid-cols-51'
-      })
-    }
+    return {
+      size: 'w-3 h-3',
+      numberOfCollums: 'grid-cols-51',
+    };
   }
 
   function captureScreenshot() {
@@ -82,11 +80,11 @@ export default function PixelArt() {
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center`}>
-      <div className="flex flex-col md:flex-row items-center justify-around bg-slate-400 p-10 rounded-lg shadow-lg">
-        <div className="grid grid-cols-1 gap-2 p-5">
+    <div>
+      <div className="flex items-center justify-around bg-slate-400 p-10 rounded-lg shadow-lg w-full h-screen border-2 border-red">
+        <div className="grid grid-cols-1 gap-2 p-5 min-w-[150px]">
           <button
-            onClick={() => { handleBorder(border) }}
+            onClick={() => { handleBorder(border); }}
             className="text-white rounded-lg border border-gray-700 bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-200 px-4 py-2"
           >
             {border ? "Bordas" : "Bordas"}
@@ -98,39 +96,40 @@ export default function PixelArt() {
             Salvar
           </button>
           <button
-            onClick={() => { handleCollums(110); setPixels(Array(110).fill(selectedColor)) }}
+            onClick={() => { handleCollums(110); setPixels(Array(110).fill(selectedColor)); }}
             className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
           >
             Pequeno
           </button>
           <button
-            onClick={() => { handleCollums(336); setPixels(Array(336).fill(selectedColor)) }}
+            onClick={() => { handleCollums(336); setPixels(Array(336).fill(selectedColor)); }}
             className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
           >
             Médio
           </button>
           <button
-            onClick={() => { handleCollums(1581); setPixels(Array(1581).fill(selectedColor)) }}
+            onClick={() => { handleCollums(1581); setPixels(Array(1581).fill(selectedColor)); }}
             className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
           >
             Grande
           </button>
           <button
-            onClick={() => { setPixels(Array(collums).fill(selectedColor)) }}
+            onClick={() => { setPixels(Array(collums).fill(selectedColor)); }}
             className="text-white rounded-lg border border-gray-700 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-200 px-4 py-2"
-
           >
             Limpar
           </button>
         </div>
 
-        <div className={`grid ${handleSize().numberOfCollums} gap-0 flex-grow p-2`}
-          id="pixel-art-canvas">
+        <div
+          className={`grid ${handleSize().numberOfCollums} gap-0 p-2 min-w-[500px]`}
+          id="pixel-art-canvas"
+        >
           {pixels.map((color, index) => (
             <div
               key={index}
-              className={`${handleSize().size} ${border ? 'border-2' : ''} border-blue-300`}
-              style={{ backgroundColor: color }}
+              className={`${handleSize().size} ${border ? 'border-2' : ''} border-blue-300 gap-0`}
+              style={{ backgroundColor: color, boxSizing: 'border-box' }}
               onClick={() => handleSinglePixel(index)}
             ></div>
           ))}
