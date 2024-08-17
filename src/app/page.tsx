@@ -30,16 +30,18 @@ const MeuComponente = () => {
         <p className='text-lg mb-6'>
           Explore o app e veja as melhorias que implementei, incluindo uma interface mais intuitiva e recursos adicionais.
         </p>
-        <button
-          type='button'
-          className='bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center'
-          onClick={handleClick}
-        >
-          <svg className='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l7-7-7-7' />
-          </svg>
-          Acessar o App
-        </button>
+        <div className='flex justify-center'>
+          <button
+            type='button'
+            className='bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center'
+            onClick={handleClick}
+          >
+            <svg className='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l7-7-7-7' />
+            </svg>
+            Acessar o App
+          </button>
+        </div>
       </div>
     </div>
   );
