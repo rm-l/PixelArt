@@ -28,7 +28,15 @@ const MeuComponente = () => {
           Refatorei o aplicativo para aplicar novas técnicas e funcionalidades.
         </p>
         <p className='text-lg mb-6'>
-          Explore o app e veja as melhorias que implementei, incluindo uma interface mais intuitiva e recursos adicionais.
+          Para acessar o codigo da aplicação visite: {' '}
+          <a
+            href='https://github.com/rm-l/PixelArt/'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-blue-400 underline'
+          >
+            github.com/rm-l/pixelart
+          </a>
         </p>
         <div className='flex justify-center'>
           <button
