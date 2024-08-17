@@ -1,7 +1,7 @@
 'use client'
 import html2canvas from "html2canvas";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
 export default function PixelArt() {
@@ -9,8 +9,9 @@ export default function PixelArt() {
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [border, setBorder] = useState(true);
   const [pixels, setPixels] = useState(Array(collums).fill('#ffffff'));
-  const [pickingColor, setPickingColor] = useState(false); // Novo estado para controle de seleção de cor
-  const [pickedColor, setPickedColor] = useState(''); // Novo estado para armazenar a cor selecionada
+  const [pickingColor, setPickingColor] = useState(false);
+  const [pickedColor, setPickedColor] = useState('');
+  const [shouldSave, setShouldSave] = useState(false);
 
   const colorOptions: string[] = [
     "#E53935",
@@ -89,6 +90,21 @@ export default function PixelArt() {
     setPickingColor(true);
   }
 
+  useEffect(() => {
+    if (shouldSave && !border) {
+      captureScreenshot();
+      setShouldSave(false);
+    }
+  }, [border, shouldSave]);
+
+  const handleSave = () => {
+    const shouldProceed = window.confirm("Deseja realmente salvar o arquivo?");
+    if (shouldProceed) {
+      setBorder(false);
+      setShouldSave(true);
+    }
+  };
+
   function handleClickPixel(index: number) {
     if (pickingColor) {
       setPickedColor(pixels[index]);
@@ -117,7 +133,7 @@ export default function PixelArt() {
       <div className="flex items-center justify-center w-screen h-screen">
         <div className="grid grid-cols-1 gap-2 min-w-[150px]">
           <button
-            onClick={captureScreenshot}
+            onClick={() => { setBorder(false), handleSave() }}
             className="text-white rounded-lg border border-green-700 bg-green-500 hover:bg-green-600
              focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-200 px-4 py-2"
           >
@@ -160,7 +176,7 @@ export default function PixelArt() {
           {pixels.map((color, index) => (
             <div
               key={index}
-              className={`${handleSize().size} ${border ? 'border-0.5 border-gray-600' : ''} border-blue-300 gap-0`}
+              className={`${handleSize().size} ${border ? 'border-0.5 border-gray-600 border-opacity-5' : ''} border-blue-300 gap-0`}
               style={{ backgroundColor: color }}
               onClick={() => handleClickPixel(index)}
             ></div>
