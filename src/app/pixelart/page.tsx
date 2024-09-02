@@ -129,9 +129,9 @@ export default function PixelArt() {
   }
 
   return (
-    <div className="w-full h-screen bg-[#2e2e2e]">
-      <div className="flex items-center justify-center w-screen h-screen">
-        <div className="grid grid-cols-1 gap-2 min-w-[150px]">
+    <div className="grid w-full h-screen bg-[#2e2e2e] overflow-auto">
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col justify-evenly gap-2  bg-gray-200 rounded-lg shadow-md border-2 p-3">
           <button
             onClick={() => { setBorder(false), handleSave() }}
             className="text-white rounded-lg border border-green-700 bg-green-500 hover:bg-green-600
@@ -162,7 +162,7 @@ export default function PixelArt() {
             Grande
           </button>
           <button
-            onClick={() => { setPixels(Array(collums).fill(selectedColor)); }}
+            onClick={() => { setPixels(Array(collums).fill(WHITE)); }}
             className="text-white rounded-lg border border-gray-700 bg-red-600 hover:bg-red-700 focus:outline-none
              focus:ring-2 focus:ring-red-300 transition duration-200 px-4 py-2"
           >
