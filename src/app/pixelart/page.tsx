@@ -1,19 +1,29 @@
-'use client'
+"use client";
 import html2canvas from "html2canvas";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { HexColorInput, HexColorPicker } from 'react-colorful';
+import { HexColorInput, HexColorPicker } from "react-colorful";
+
+const GRID_CONFIG = {
+  small: { pixels: 336, cols: 21, pixelSize: 20 },
+  medium: { pixels: 1581, cols: 51, pixelSize: 10 },
+  large: { pixels: 5555, cols: 101, pixelSize: 5 },
+};
 
 export default function PixelArt() {
-  const [collums, setCollums] = useState(336);
-  const [selectedColor, setSelectedColor] = useState('#ffffff');
-  const [border, setBorder] = useState(true);
-  const [pixels, setPixels] = useState(Array(collums).fill('#ffffff'));
-  const [pickingColor, setPickingColor] = useState(false);
-  const [pickedColor, setPickedColor] = useState('');
-  const [shouldSave, setShouldSave] = useState(false);
+  const [gridSize, setGridSize] = useState<"small" | "medium" | "large">(
+    "small"
+  );
+  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [pixels, setPixels] = useState<string[]>([]);
+  const [showBorder, setShowBorder] = useState(true);
+  const [zoom, setZoom] = useState(1);
+  const [isColorPickerActive, setIsColorPickerActive] = useState(false);
 
-  const colorOptions: string[] = [
+  const config = GRID_CONFIG[gridSize];
+  const rows = Math.ceil(config.pixels / config.cols);
+
+  const colorOptions = [
     "#E53935",
     "#FDD835",
     "#43A047",
@@ -24,200 +34,183 @@ export default function PixelArt() {
     "#000000",
   ];
 
-  const WHITE: string = "#ffffff"
+  useEffect(() => {
+    setPixels(Array(config.pixels).fill("#ffffff"));
+  }, [gridSize]);
 
-  interface ISizeConfig {
-    size: string;
-    numberOfCollums: string;
-  }
+  const handlePixelClick = (index: number) => {
+    if (isColorPickerActive) {
+      setSelectedColor(pixels[index]);
+      setIsColorPickerActive(false);
+      return;
+    }
 
-  const GRID_PEQUENO = 336
-  const GRID_MEDIO = 1581
-  const GRID_GRANDE = 5555
-
-  function handleColor(value: string): void {
-    setSelectedColor(value);
-  }
-
-  function handleSinglePixel(index: number): void {
     const newPixels = [...pixels];
     newPixels[index] = selectedColor;
     setPixels(newPixels);
-  }
+  };
 
-  function handleBorder(border: boolean): void {
-    setBorder(!border);
-  }
+  const resetGrid = () => {
+    setPixels(Array(config.pixels).fill("#ffffff"));
+  };
 
-  function handleCollums(collums: number): void {
-    setCollums(collums);
-  }
-
-  function handleSize(): ISizeConfig {
-    if (collums === 1581) {
-      return {
-        size: 'w-5 h-5',
-        numberOfCollums: 'grid-cols-51 min-w-[1020px]',
-      };
-    }
-
-    if (collums === 336) {
-      return {
-        size: 'w-5 h-5',
-        numberOfCollums: 'grid-cols-21 min-w-[420px]',
-      };
-    }
-    else
-      return {
-        size: 'w-3 h-3',
-        numberOfCollums: 'grid-cols-101 min-w-[1212px]',
-      };
-  }
-
-  function captureScreenshot() {
-    const element = document.getElementById('pixel-art-canvas');
+  const captureScreenshot = () => {
+    const element = document.getElementById("pixel-art-canvas");
     if (element) {
       html2canvas(element).then((canvas) => {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'pixel-art.png';
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "pixel-art.png";
         link.click();
       });
     }
-  }
-
-  function startPickingColor() {
-    setPickingColor(true);
-  }
-
-  useEffect(() => {
-    if (shouldSave && !border) {
-      captureScreenshot();
-      setShouldSave(false);
-    }
-  }, [border, shouldSave]);
-
-  const handleSave = () => {
-    const shouldProceed = window.confirm("Deseja realmente salvar o arquivo?");
-    if (shouldProceed) {
-      setBorder(false);
-      setShouldSave(true);
-    }
   };
 
-  function handleClickPixel(index: number) {
-    if (pickingColor) {
-      setPickedColor(pixels[index]);
-      setSelectedColor(pixels[index]);
-      setPickingColor(false);
-    } else {
-      handleSinglePixel(index);
-    }
-  }
-
-  function getTextColor() {
-    let atualcolor = selectedColor
-    const parse = atualcolor.replace('#', '');
-    const r = parseInt(parse.substring(0, 2), 16);
-    const g = parseInt(parse.substring(2, 4), 16);
-    const b = parseInt(parse.substring(4, 6), 16);
-    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    const result = luminance > 128 ? 'text-black' : 'text-white';
-    console.log(result)
-
-    return result
-  }
+  const getTextColor = () => {
+    const hex = selectedColor.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return r * 0.299 + g * 0.587 + b * 0.114 > 186
+      ? "text-black"
+      : "text-white";
+  };
 
   return (
-    <div className="grid w-full h-screen bg-[#2e2e2e] overflow-auto">
-      <div className="flex items-center justify-center">
-        <div className="flex flex-col justify-evenly gap-2  bg-gray-200 rounded-lg shadow-md border-2 p-3">
+    <div className="flex flex-col h-screen bg-gray-800 p-1 sm:p-2 md:p-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between mb-1 sm:mb-2 md:mb-4 gap-1 sm:gap-2">
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center sm:text-left">
+          Pixel Art Editor
+        </h1>
+        <div className="flex justify-center gap-1 sm:gap-2">
           <button
-            onClick={() => { setBorder(false), handleSave() }}
-            className="text-white rounded-lg border border-green-700 bg-green-500 hover:bg-green-600
-             focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-200 px-4 py-2"
+            onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+            className="px-2 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm md:text-base"
           >
-            Salvar
-          </button>
-
-          <button
-            onClick={() => { handleCollums(GRID_PEQUENO); setPixels(Array(GRID_PEQUENO).fill(WHITE)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none
-             focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
-          >
-            Pequeno
+            +
           </button>
           <button
-            onClick={() => { handleCollums(GRID_MEDIO); setPixels(Array(GRID_MEDIO).fill(WHITE)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none
-             focus:ring-2 focus:ring-yellow-100 transition duration-200 px-4 py-2"
+            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+            className="px-2 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm md:text-base"
           >
-            Médio
-          </button>
-          <button
-            onClick={() => { handleCollums(GRID_GRANDE); setPixels(Array(GRID_GRANDE).fill(WHITE)); }}
-            className="rounded-lg border border-gray-700 bg-yellow-200 text-black hover:bg-yellow-300 focus:outline-none focus:ring-2
-             focus:ring-yellow-100 transition duration-200 px-4 py-2"
-          >
-            Grande
-          </button>
-          <button
-            onClick={() => { setPixels(Array(collums).fill(WHITE)); }}
-            className="text-white rounded-lg border border-gray-700 bg-red-600 hover:bg-red-700 focus:outline-none
-             focus:ring-2 focus:ring-red-300 transition duration-200 px-4 py-2"
-          >
-            Limpar
+            -
           </button>
         </div>
-        <div
-          className={`grid ${handleSize().numberOfCollums} gap-0 p-5 max-w-[80vw] max-h-[90vh] overflow-auto`}
-          id="pixel-art-canvas"
-        >
-          {pixels.map((color, index) => (
-            <div
-              key={index}
-              className={`${handleSize().size} ${border ? 'border-0.5 border-gray-600 border-opacity-5' : ''} border-blue-300 gap-0`}
-              style={{ backgroundColor: color }}
-              onClick={() => handleClickPixel(index)}
-            ></div>
-          ))}
-        </div>
-        <div className="flex flex-col items-center justify-start bg-gray-200 rounded-lg shadow-md border-2 p-3">
-          <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
-          <HexColorInput color={selectedColor} onChange={setSelectedColor} placeholder="Type a color" prefixed alpha className={`max-w-[100px]
-             mt-2 rounded-lg border-1 shadow-md shadow-gray-500 border-black text-center ${getTextColor()}`} style={{ backgroundColor: selectedColor }} />
-          <div className="flex flex-col justify-center items-center align-middle gap-2 mt-5 mb-5">
-            <Image
-              src="/contagotas.svg"
-              alt="Selecionar Cor"
-              onClick={startPickingColor}
-              className={`w-10 h-10 flexcursor-pointer shadow-lg shadow-gray-500 p-1 rounded-lg transition-transform duration-200 
-                ${pickingColor ? 'scale-110 bg-gray-500 rounded-full' : 'scale-100'}`}
-              width={0}
-              height={0}
+      </div>
+      <div className="flex flex-col md:flex-row flex-1 gap-1 sm:gap-2 md:gap-4">
+        <div className="w-full md:w-48 lg:w-64 bg-gray-700 p-1 sm:p-2 md:p-4 rounded-lg flex flex-row md:flex-col gap-1 sm:gap-2 md:gap-4 overflow-x-auto md:overflow-x-visible">
+          <div className="flex flex-col gap-1 sm:gap-2 min-w-[150px] sm:min-w-[180px] md:min-w-0">
+            <HexColorPicker
+              color={selectedColor}
+              onChange={setSelectedColor}
+              className="!w-[100px] !h-[100px] sm:!w-[120px] sm:!h-[120px] md:!w-full md:!h-[160px]"
             />
-            <button
-              onClick={() => { handleBorder(border); }}
-              className="text-white rounded-lg border border-gray-700 bg-blue-500 hover:bg-blue-600 focus:outline-none 
-              focus:ring-2 focus:ring-blue-300 transition duration-200 px-4 py-2 mt-5 w-[100px]"
-            >
-              {border ? "Grid" : "Grid"}
-            </button>
-            {/* <div
+
+            <HexColorInput
+              color={selectedColor}
+              onChange={setSelectedColor}
+              className={`p-1 sm:p-2 rounded text-xs sm:text-sm md:text-base ${getTextColor()}`}
               style={{ backgroundColor: selectedColor }}
-              className="w-10 h-10 border border-gray-700 rounded-full"
-            ></div> */}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-2 w-[100px]">
-            {colorOptions.map((color, index) => (
+
+          <div className="grid grid-cols-4 gap-1 min-w-[80px] sm:min-w-[100px]">
+            {colorOptions.map((color) => (
               <button
-                key={index}
-                className="w-10 h-10 rounded-full border border-gray-300 shadow-md hover:shadow-gray-500 focus:outline-none 
-                focus:ring-2 focus:ring-gray-300 transition-all duration-150"
+                key={color}
                 style={{ backgroundColor: color }}
-                onClick={() => handleColor(color)}
-              ></button>
+                className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded border border-gray-300"
+                onClick={() => setSelectedColor(color)}
+              />
             ))}
+          </div>
+          <div className="flex flex-row md:flex-col gap-1 sm:gap-2 min-w-[100px] sm:min-w-[120px] md:min-w-0">
+            <button
+              onClick={() => setIsColorPickerActive(!isColorPickerActive)}
+              className={`p-1 sm:p-2 ${
+                isColorPickerActive ? "bg-blue-600" : "bg-gray-600"
+              } text-white rounded flex items-center justify-center`}
+              title="Conta-gotas"
+            >
+              <Image
+                src="/contagotas.svg"
+                alt="Conta-gotas"
+                width={16}
+                height={16}
+                className="filter invert"
+              />
+              <span className="sr-only">Conta-gotas</span>
+            </button>
+
+            <button
+              onClick={() => setShowBorder(!showBorder)}
+              className="p-1 sm:p-2 bg-gray-600 text-white rounded text-xs"
+            >
+              {showBorder ? "Remover Grid" : "Adcionar Grid"}
+            </button>
+            <button
+              onClick={resetGrid}
+              className="p-1 sm:p-2 bg-red-600 text-white rounded text-xs"
+            >
+              Limpar
+            </button>
+            <button
+              onClick={captureScreenshot}
+              className="p-1 sm:p-2 bg-green-600 text-white rounded text-xs"
+            >
+              Salvar
+            </button>
+          </div>
+
+          <div className="flex flex-row md:flex-col gap-1 sm:gap-2 min-w-[120px] sm:min-w-[140px] md:min-w-0">
+            <h3 className="hidden md:block text-white text-sm md:text-base">
+              Tamanho:
+            </h3>
+            {(["small", "medium", "large"] as const).map((size) => (
+              <button
+                key={size}
+                onClick={() => setGridSize(size)}
+                className={`p-1 rounded text-xs ${
+                  gridSize === size ? "bg-blue-600" : "bg-gray-600"
+                } text-white`}
+              >
+                {size === "small" && "Pequeno"}
+                {size === "medium" && "Médio"}
+                {size === "large" && "Grande"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex-1 bg-gray-900 rounded-lg p-1 sm:p-2 md:p-4 flex items-center justify-center overflow-auto">
+          <div
+            id="pixel-art-canvas"
+            className="bg-white shadow-lg mx-auto"
+            style={{
+              maxWidth: "100%",
+              overflow: "auto",
+            }}
+          >
+            <div
+              className="grid"
+              style={{
+                gridTemplateColumns: `repeat(${config.cols}, ${
+                  config.pixelSize * zoom
+                }px)`,
+              }}
+            >
+              {pixels.map((color, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: `${config.pixelSize * zoom}px`,
+                    height: `${config.pixelSize * zoom}px`,
+                    backgroundColor: color,
+                    border: showBorder ? "1px solid rgba(0,0,0,0.05)" : "none",
+                  }}
+                  onClick={() => handlePixelClick(index)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
