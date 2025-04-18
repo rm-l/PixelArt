@@ -14,7 +14,7 @@ export default function PixelArt() {
   const [gridSize, setGridSize] = useState<"small" | "medium" | "large">(
     "small"
   );
-  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [selectedColor, setSelectedColor] = useState("#000000");
   const [pixels, setPixels] = useState<string[]>([]);
   const [showBorder, setShowBorder] = useState(true);
   const [zoom, setZoom] = useState(1);
